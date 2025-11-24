@@ -1,0 +1,103 @@
+managed implementation in class ZBP_R_BIGLIETTI unique;
+strict ( 2 );
+
+with draft;
+extensible;
+define behavior for ZR_BIGLIETTI alias Biglietto
+persistent table zbiglietti
+extensible
+draft table zbiglietti_d
+etag master Locallastchanged
+lock master
+total etag ChangedAt
+authorization master ( global )
+early numbering
+{
+  //  field ( mandatory : create )
+  //   IdBiglietto;
+
+  field ( readonly )
+  IdBiglietto,
+  CreatedBy,
+  CreatedAt,
+  ChangedBy,
+  ChangedAt,
+  Locallastchanged;
+
+  //  field ( readonly : update )
+  //   IdBiglietto;
+
+
+  create;
+  update;
+  delete;
+
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Edit;
+  draft action Resume;
+  draft determine action Prepare;
+
+  association _componenti { create; with draft; }
+  //association _componenti;
+
+  mapping for zbiglietti corresponding extensible
+    {
+      IdBiglietto      = id_biglietto;
+      CreatedBy        = created_by;
+      CreatedAt        = created_at;
+      ChangedBy        = changed_by;
+      ChangedAt        = changed_at;
+      Locallastchanged = locallastchanged;
+    }
+
+}
+
+
+define behavior for ZR_COMPONENTI alias Componenti
+persistent table zcomponenti
+extensible
+draft table zcomponenti_d
+lock dependent by _biglietti
+etag dependent
+//lock master total etag ChangedAt
+authorization master ( global )
+//early numbering
+{
+    field ( mandatory : create )
+    Progressivo;
+      //   IdBiglietto;
+
+  field ( readonly )
+  IdBiglietto,
+//  Progressivo,
+  CreatedBy,
+  CreatedAt,
+  ChangedBy,
+  ChangedAt;
+//  Locallastchanged;
+
+    field ( readonly : update )
+    Progressivo;
+  //   IdBiglietto;
+
+//    create;
+  update;
+  delete;
+
+  association _biglietti { with draft; }
+
+  mapping for zcomponenti corresponding extensible
+    {
+      IdBiglietto      = id_biglietto;
+      Progressivo      = progressivo;
+      Age              = age;
+      Sex              = sex;
+      CreatedBy        = created_by;
+      CreatedAt        = created_at;
+      ChangedBy        = changed_by;
+      ChangedAt        = changed_at;
+//      Locallastchanged = locallastchanged;
+    }
+
+}
